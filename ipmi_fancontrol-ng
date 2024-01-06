@@ -93,7 +93,6 @@ sub SetFanSpeed
 
     my $cpu_temp_difference = $g_current_cpu_temp - $g_last_set_cpu_temp;
     my $gpu_temp_difference = $g_current_gpu_temp - $g_last_set_gpu_temp;
-    if( ( (abs $cpu_temp_difference) > $min_temp_change ) or ( (abs $gpu_temp_difference) > $min_temp_change ) )
     {
         # Set all 4 fan banks to operate at $fan_speed duty cycle (0x0-0x64 valid range)
         print "\n";
