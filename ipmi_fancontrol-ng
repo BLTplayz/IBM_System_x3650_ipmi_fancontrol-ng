@@ -133,6 +133,23 @@ sub GetCPUTemp
     return $current_cpu_temp;
 }
 
+#Get current GPU temp from nvidia-smi. Not tested with multiple GPUs
+sub GetGPUTemp
+{
+    my $current_gpu_temp = 0;
+    my $gpu_sensor_output = `nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader`; #Get current GPU temp as a simple number 
+    my @vals = $gpu_sensor_output;
+    foreach my $value (@vals)
+    {
+        # Remove the *C from $sensors_output (and anything else thats not numbers or decimal points) (Dont think this is necessary but haven't tested)
+        my $gpu_temp = `echo $value`;
+        $current_gpu_temp = max($gpu_temp, $current_gpu_temp);
+    }
+    # Remove trailing line endings
+    $current_gpu_temp =~ s/\n//g;
+    return $current_gpu_temp;
+}
+
 sub CalculateScalars
 {
     my @previous = ();
@@ -153,7 +170,7 @@ sub CalculateScalars
 sub UpdateFanSpeed
 { 
     my $current_cpu_temp = GetCPUTemp();
-    my $current_gpu_temp = 0;
+    my $current_gpu_temp = GetGPUTemp();
     
     $g_current_cpu_temp = $current_cpu_temp;
     $g_current_gpu_temp = $current_gpu_temp;
